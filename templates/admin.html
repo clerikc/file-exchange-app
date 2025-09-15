@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Exchange - Admin Panel</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h2>Admin Panel</h2>
+            <nav>
+                <a href="/dashboard">Home</a>
+                <a href="/admin">Admin Panel</a>
+                <a href="/logout">Logout</a>
+            </nav>
+        </header>
+
+        <div class="admin-section">
+            <h3>Create New User</h3>
+            <form action="/admin/create-user" method="POST">
+                <div>
+                    <label>Username:</label>
+                    <input type="text" name="username" required>
+                </div>
+                <div>
+                    <label>Password:</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div>
+                    <label>Role:</label>
+                    <select name="role" required>
+                        <option value="downloader">Downloader (read only)</option>
+                        <option value="uploader">Uploader/Downloader</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <button type="submit">Create User</button>
+            </form>
+        </div>
+
+        <div class="users-section">
+            <h3>Existing Users</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Permissions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Users}}
+                    <tr>
+                        <td>{{.ID}}</td>
+                        <td>{{.Username}}</td>
+                        <td>{{.Role}}</td>
+                        <td>
+                            Upload: {{.CanUpload}}, 
+                            Download: {{.CanDownload}},
+                            Admin: {{.IsAdmin}}
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="logs-section">
+            <h3>Recent Activity Logs</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Action</th>
+                        <th>Filename</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Logs}}
+                    <tr>
+                        <td>{{.Username}}</td>
+                        <td>{{.Action}}</td>
+                        <td>{{.Filename}}</td>
+                        <td>{{.Timestamp}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

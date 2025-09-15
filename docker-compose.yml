@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080" # Пробрасываем порт приложения на хост
+    volumes:
+      - ./uploads:/app/uploads # Монтируем папку с файлами на хост
+      - ./data.db:/app/data.db # Монтируем файл БД на хост (не лучшая практика для продакшена, но для начала сойдет)
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml # Конфиг для сбора метрик с нашего приложения
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Смените пароль!
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+networks:
+  monitoring:
+
+volumes:
+  grafana-storage:

@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'file-exchange-app'
+    static_configs:
+      - targets: ['app:8080'] # Prometheus будет обращаться к нашему приложению по имени сервиса в Docker сети
