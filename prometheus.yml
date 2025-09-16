@@ -4,4 +4,4 @@ global:
 scrape_configs:
   - job_name: 'file-exchange-app'
     static_configs:
-      - targets: ['app:8080'] # Prometheus будет обращаться к нашему приложению по имени сервиса в Docker сети
+      - targets: ['file-exchange-app-container:8080']  # Имя контейнера в Docker сети
