@@ -1,6 +1,8 @@
 package storage
 
 import (
+	_ "github.com/mattn/go-sqlite3" // Импорт драйвера SQLite3
+
 	"database/sql"
 	"log"
 

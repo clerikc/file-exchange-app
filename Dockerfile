@@ -1,28 +1,23 @@
-# Берем официальный образ Go
-FROM golang:1.21-alpine
+# Стадия сборки
+FROM golang:1.21-alpine AS builder
 
-# Устанавливаем зависимости для компиляции (например, для SQLite)
 RUN apk add --no-cache gcc musl-dev
 
-# Создаем рабочую директорию
 WORKDIR /app
+COPY . .
 
-# Копируем файлы модулей и скачиваем зависимости
-COPY go.mod ./
-COPY go.sum ./
-RUN go mod download
+# Устанавливаем совместимую версию go-sqlite3
+RUN go get github.com/mattn/go-sqlite3@v1.14.22
 
-# Копируем весь исходный код
-COPY . ./
+RUN CGO_ENABLED=1 go build -o file-exchange-app
 
-# Создаем необходимые директории
-RUN mkdir -p uploads
-
-# Собираем приложение
-RUN go build -o /file-exchange-app
-
-# Экспонируем порт, на котором работает приложение
+# Стадия запуска  
+FROM alpine:latest
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY --from=builder /app/file-exchange-app .
+COPY --from=builder /app/uploads ./uploads
+COPY --from=builder /app/templates ./templates
+COPY --from=builder /app/static ./static
 EXPOSE 8080
-
-# Команда для запуска приложения
-CMD [ "/file-exchange-app" ]
+CMD ["./file-exchange-app"]
